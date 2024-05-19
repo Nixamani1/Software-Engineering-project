@@ -1,0 +1,16 @@
+Explanation
+Main Class (ToDoListApp):
+
+Extends Application and overrides the start method.
+Creates the main GUI elements: a ListView to display tasks, a TextField for task input, and a Button to add tasks.
+Uses an ObservableList<ToDoItem> to hold the tasks.
+ToDoItem Class:
+
+A simple class to represent a to-do item with a task description and a completed status.
+ToDoListCell Class:
+
+Custom cell implementation for the ListView.
+Contains a CheckBox for marking tasks as completed, a Label for the task description, and a Button to delete the task.
+Updates the task's completed status and removes the task from the list as needed.
+Step 4: Running the Application
+Compile and run the application. You should see a window with a list of tasks, where you can add new tasks, mark them as completed, and delete them.
