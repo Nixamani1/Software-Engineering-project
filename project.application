@@ -1,0 +1,110 @@
+import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
+public class ToDoListApp extends Application {
+
+    private final ObservableList<ToDoItem> toDoItems = FXCollections.observableArrayList();
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    @Override
+    public void start(Stage primaryStage) {
+        primaryStage.setTitle("To-Do List Application");
+
+        ListView<ToDoItem> listView = new ListView<>(toDoItems);
+        listView.setCellFactory(param -> new ToDoListCell());
+
+        TextField inputField = new TextField();
+        inputField.setPromptText("Enter a new task");
+
+        Button addButton = new Button("Add");
+        addButton.setOnAction(event -> {
+            String text = inputField.getText().trim();
+            if (!text.isEmpty()) {
+                toDoItems.add(new ToDoItem(text));
+                inputField.clear();
+            }
+        });
+
+        HBox inputBox = new HBox(10, inputField, addButton);
+        HBox.setHgrow(inputField, Priority.ALWAYS);
+
+        VBox root = new VBox(10, listView, inputBox);
+        Scene scene = new Scene(root, 400, 300);
+
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    static class ToDoItem {
+        private final String task;
+        private boolean completed;
+
+        ToDoItem(String task) {
+            this.task = task;
+            this.completed = false;
+        }
+
+        String getTask() {
+            return task;
+        }
+
+        boolean isCompleted() {
+            return completed;
+        }
+
+        void setCompleted(boolean completed) {
+            this.completed = completed;
+        }
+    }
+
+    static class ToDoListCell extends ListCell<ToDoItem> {
+        private final Label taskLabel = new Label();
+        private final CheckBox completedCheckBox = new CheckBox();
+        private final Button deleteButton = new Button("Delete");
+
+        ToDoListCell() {
+            HBox hBox = new HBox(10, completedCheckBox, taskLabel, deleteButton);
+            HBox.setHgrow(taskLabel, Priority.ALWAYS);
+
+            completedCheckBox.setOnAction(event -> {
+                ToDoItem item = getItem();
+                if (item != null) {
+                    item.setCompleted(completedCheckBox.isSelected());
+                    updateItem(item, false);
+                }
+            });
+
+            deleteButton.setOnAction(event -> {
+                if (getItem() != null) {
+                    getListView().getItems().remove(getItem());
+                }
+            });
+
+            setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+            setGraphic(hBox);
+        }
+
+        @Override
+        protected void updateItem(ToDoItem item, boolean empty) {
+            super.updateItem(item, empty);
+            if (empty || item == null) {
+                setText(null);
+                setGraphic(null);
+            } else {
+                taskLabel.setText(item.getTask());
+                completedCheckBox.setSelected(item.isCompleted());
+                setGraphic(getGraphic());
+            }
+        }
+    }
+}
